@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - "v*.*.*"
+
+permissions:
+  contents: write
+
 jobs:
   build:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
@@ -109,6 +113,12 @@ jobs:
           cp bin/packages/${{ matrix.build_env.pkgarch }}/awgopenwrt/luci-app-amneziawg_*.ipk awgrelease/luci-app-amneziawg_${postfix}.ipk
           cp bin/targets/${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}/packages/kmod-amneziawg_*.ipk awgrelease/kmod-amneziawg_${postfix}.ipk
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: awg-ipk
+          path: awgrelease/*.ipk
+          
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
